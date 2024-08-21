@@ -6,10 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar',
+        'occupation',
+        'connect'
     ];
 
     /**
@@ -43,5 +47,27 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'client_id', 'id')->orderBy('id', 'desc');
+    }
+
+    public function proposals()
+    {
+        return $this->hasMany(ProjectApplicant::class, 'freelancer_id', 'id')->orderBy('id', 'desc');
+    }
+
+    public function hasAppliedToProject($project_id)
+    {
+        return ProjectApplicant::where('project_id', $project_id)
+            ->where('freelancer_id', $this->id)
+            ->exists();
     }
 }
