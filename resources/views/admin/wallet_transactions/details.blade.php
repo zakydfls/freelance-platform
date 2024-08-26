@@ -8,8 +8,9 @@
     </x-slot>
     <div class="py-12">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-10 flex flex-col gap-y-5">
-                <h3 class="text-indigo-950 text-xl font-bold mb-5">
+            <div class="bg-[#1F2937] overflow-hidden shadow-sm sm:rounded-lg p-10 flex flex-col gap-y-5">
+                <h3 class="text-slate-200 text-xl font-bold mb-5">
+                    {{ $walletTransaction->type === 'Topup'? 'Topup Wallet' : 'Withdraw Wallet' }}
                 </h3>
                 <div class="flex flex-row gap-x-5 items-center justify-between">
                     <svg width="100" height="100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -29,7 +30,7 @@
                     </svg>
                     <div>
                         <p class="text-slate-500 text-sm">Total Amount</p>
-                        <h3 class="text-indigo-950 text-xl font-bold">Rp {{ number_format($walletTransaction->amount, 0,
+                        <h3 class="text-slate-200 text-xl font-bold">Rp {{ number_format($walletTransaction->amount, 0,
                             ',', '.')}}</h3>
                     </div>
                     @if ($walletTransaction->is_paid)
@@ -43,46 +44,53 @@
                     @endif
                     <div>
                         <p class="text-slate-500 text-sm">Date</p>
-                        <h3 class="text-indigo-950 text-xl font-bold">1{{
+                        <h3 class="text-slate-200 text-xl font-bold">1{{
                             $walletTransaction->created_at }}
                         </h3>
                     </div>
                     <div class="">
                         <p class="text-slate-500 text-sm">User</p>
-                        <h3 class="text-indigo-950 text-xl font-bold">{{ $walletTransaction->user->name }}</h3>
+                        <h3 class="text-slate-200 text-xl font-bold">{{ $walletTransaction->user->name }}</h3>
                     </div>
                 </div>
                 @if ($walletTransaction->type == 'Withdraw')
                 <hr class="my-5">
 
                 <div>
-                    <h3 class="text-indigo-950 text-xl font-bold mb-5">Send Payment to:</h3>
+                    <h3 class="text-slate-200 text-xl font-bold mb-5">Send Payment to:</h3>
                     <div class="flex flex-row gap-x-10">
                         <div>
                             <p class="text-slate-500 text-sm">Bank</p>
-                            <h3 class="text-indigo-950 text-xl font-bold">angga capital</h3>
+                            <h3 class="text-slate-200 text-xl font-bold">{{ $walletTransaction->bank_name }}</h3>
                         </div>
                         <div>
                             <p class="text-slate-500 text-sm">No Account</p>
-                            <h3 class="text-indigo-950 text-xl font-bold">19823921839128</h3>
+                            <h3 class="text-slate-200 text-xl font-bold">{{ $walletTransaction->bank_account_number }}
+                            </h3>
                         </div>
                         <div>
                             <p class="text-slate-500 text-sm">Account Name</p>
-                            <h3 class="text-indigo-950 text-xl font-bold">Saber Jaya</h3>
+                            <h3 class="text-slate-200 text-xl font-bold">{{ $walletTransaction->bank_account_name }}
+                            </h3>
                         </div>
                     </div>
 
                 </div>
 
+                @if ($walletTransaction->is_paid)
 
                 <hr class="my-5">
-                <h3 class="text-indigo-950 text-xl font-bold mb-5">Proof of Payment</h3>
-                <img src=" " alt="" class="rounded-2xl object-cover w-[300px] h-[200px] mb-3">
+                <h3 class="text-slate-200 text-xl font-bold mb-5">Proof of Payment</h3>
+                <img src="{{ Storage::url($walletTransaction->proof) }}" alt=""
+                    class="rounded-2xl object-cover w-[300px] h-[200px] mb-3">
+                @endif
+                @if (!$walletTransaction->is_paid)
 
                 <hr class="my-5">
 
-                <h3 class="text-indigo-950 text-xl font-bold">Confirm Withdrawal</h3>
-                <form method="POST" action="#" enctype="multipart/form-data">
+                <h3 class="text-slate-200 text-xl font-bold">Confirm Withdrawal</h3>
+                <form method="POST" action="{{ route('admin.wallet_transactions.update',$walletTransaction) }}"
+                    enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="mt-4">
@@ -100,10 +108,11 @@
                     </div>
                 </form>
                 @endif
+                @endif
 
                 @if ($walletTransaction->type == 'Topup')
                 <hr class="my-5">
-                <h3 class="text-indigo-950 text-xl font-bold mb-5">Proof of Topup Payment</h3>
+                <h3 class="text-slate-200 text-xl font-bold mb-5">Proof of Topup Payment</h3>
                 <img src="{{ Storage::url($walletTransaction->proof) }}" alt=""
                     class="rounded-2xl object-cover w-[300px] h-[200px] mb-3">
                 @if (!$walletTransaction->is_paid)

@@ -25,7 +25,7 @@ class TransactionWalletController extends Controller
     }
     public function wallet_withdraws()
     {
-        $topup_transactions = TransactionWallet::where('type', 'Withdraw')->orderByDesc('id')->paginate(10);
+        $withdraw_transactions = TransactionWallet::where('type', 'Withdraw')->orderByDesc('id')->paginate(10);
 
         return view('admin.wallet_transactions.withdrawals', compact('withdraw_transactions'));
     }
