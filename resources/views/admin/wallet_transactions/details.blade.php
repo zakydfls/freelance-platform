@@ -80,7 +80,7 @@
                 @if ($walletTransaction->is_paid)
 
                 <hr class="my-5">
-                <h3 class="text-slate-200 text-xl font-bold mb-5">Proof of Payment</h3>
+                <h3 class="text-slate-200 text-xl font-bold mb-5">Proof of Withdraw Payment</h3>
                 <img src="{{ Storage::url($walletTransaction->proof) }}" alt=""
                     class="rounded-2xl object-cover w-[300px] h-[200px] mb-3">
                 @endif
