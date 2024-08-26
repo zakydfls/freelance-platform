@@ -28,15 +28,13 @@
                                 fill="#292D32" />
                             <path d="M19 11.8599H2V13.3599H19V11.8599Z" fill="#292D32" />
                         </svg>
-                        @foreach ($wallet_transaction as $transaction)
                         <div>
                             <p class="text-slate-500 text-sm">Total Balance</p>
                             <h3 class="text-slate-200 text-xl font-bold">Rp {{
-                                number_format($transaction->user->wallet->balance,
+                                number_format(Auth::user()->wallet->balance,
                                 0,
                                 ',', '.') }}</h3>
                         </div>
-                        @endforeach
                     </div>
                     <div class="flex flex-row gap-x-5">
 

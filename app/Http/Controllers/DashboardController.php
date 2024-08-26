@@ -53,6 +53,7 @@ class DashboardController extends Controller
             $validated['user_id'] = $user->id;
 
             $newWithdrawWallet = TransactionWallet::create($validated);
+            return redirect()->route('dashboard.wallet');
         });
     }
     public function topup_wallet_store(StoreTopupWalletRequest $request)
