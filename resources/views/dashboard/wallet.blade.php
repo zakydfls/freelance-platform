@@ -9,7 +9,7 @@
 
     <div class="py-12">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-slate-200 overflow-hidden shadow-sm sm:rounded-lg p-10 flex flex-col gap-y-5">
+            <div class="bg-[#1F2937] overflow-hidden shadow-sm sm:rounded-lg p-10 flex flex-col gap-y-5">
                 <div class="flex flex-row justify-between items-center">
                     <div class="flex flex-row gap-x-5 items-center">
                         <svg width="100" height="100" viewBox="0 0 24 24" fill="none"
@@ -28,26 +28,33 @@
                                 fill="#292D32" />
                             <path d="M19 11.8599H2V13.3599H19V11.8599Z" fill="#292D32" />
                         </svg>
+                        @foreach ($wallet_transaction as $transaction)
                         <div>
                             <p class="text-slate-500 text-sm">Total Balance</p>
-                            <h3 class="text-indigo-950 text-xl font-bold">Rp 0</h3>
+                            <h3 class="text-slate-200 text-xl font-bold">Rp {{
+                                number_format($transaction->user->wallet->balance,
+                                0,
+                                ',', '.') }}</h3>
                         </div>
+                        @endforeach
                     </div>
                     <div class="flex flex-row gap-x-5">
 
-                        <a href="#" class="font-bold py-4 px-6 bg-indigo-700 text-white rounded-full">
+                        <a href="{{ route('dashboard.wallet.withdraw') }}"
+                            class="font-bold py-4 px-6 bg-indigo-700 text-white rounded-full">
                             Request Withdraw
                         </a>
 
 
-                        <a href="#" class="font-bold py-4 px-6 bg-green-700 text-white rounded-full">
+                        <a href="{{ route('dashboard.wallet.topup') }}"
+                            class="font-bold py-4 px-6 bg-green-700 text-white rounded-full">
                             Topup Wallet
                         </a>
 
                     </div>
                 </div>
                 <hr class="my-5">
-                <h3 class="text-indigo-950 text-xl font-bold">Latest Transactions</h3>
+                <h3 class="text-slate-200 text-xl font-bold">Latest Transactions</h3>
 
                 @forelse ($wallet_transaction as $transaction)
                 <div class="flex flex-row  justify-between items-center">
@@ -69,13 +76,14 @@
                         </svg>
                         <div>
                             <p class="text-slate-500 text-sm">Total Amount</p>
-                            <h3 class="text-indigo-950 text-xl font-bold">Rp 1</h3>
+                            <h3 class="text-slate-200 text-xl font-bold">Rp {{ number_format($transaction->amount, 0,
+                                ',', '.') }}</h3>
                         </div>
                     </div>
 
                     <div class="">
                         <p class="text-slate-500 text-sm">Type</p>
-                        <h3 class="text-indigo-950 text-xl font-bold">Topup</h3>
+                        <h3 class="text-slate-200 text-xl font-bold">{{ $transaction->type }}</h3>
                     </div>
                     @if ($transaction->is_paid)
 
@@ -89,7 +97,7 @@
                     @endif
                     <div>
                         <p class="text-slate-500 text-sm">Date</p>
-                        <h3 class="text-indigo-950 text-xl font-bold">{{ $transaction->created_at->diffForHumans() }}
+                        <h3 class="text-slate-200 text-xl font-bold">{{ $transaction->created_at->diffForHumans() }}
                         </h3>
                     </div>
                 </div>

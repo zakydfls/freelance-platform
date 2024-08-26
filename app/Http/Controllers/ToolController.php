@@ -81,9 +81,6 @@ class ToolController extends Controller
         return redirect()->route('admin.tools.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Tool $tool)
     {
         DB::beginTransaction();

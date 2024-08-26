@@ -21,7 +21,6 @@ class TransactionWallet extends Model
         'bank_account_name',
     ];
 
-
     public function user()
     {
         return $this->belongsTo(User::class);

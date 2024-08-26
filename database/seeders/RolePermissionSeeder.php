@@ -45,7 +45,8 @@ class RolePermissionSeeder extends Seeder
         $freelancer_role = Role::firstOrCreate(['name' => 'project_freelancer']);
         $freelancer_permission = [
             'apply job',
-            'withdraw wallet'
+            'withdraw wallet',
+            'topup wallet'
         ];
         $freelancer_role->syncPermissions($freelancer_permission);
 
@@ -59,10 +60,30 @@ class RolePermissionSeeder extends Seeder
             'password' => bcrypt('password')
         ]);
         $user->assignRole($super_admin_role);
+        // $client = User::create([
+        //     'name' => 'Freelancer Test',
+        //     'email' => 'free@mail.com',
+        //     'occupation' => 'Freelancer',
+        //     'connect' => '123',
+        //     'avatar' => 'images/default-avatar.png',
+        //     'password' => bcrypt('password')
+        // ]);
+        // $client->assignRole($freelancer_role);
+        // $freelancer = User::create([
+        //     'name' => 'Client Test',
+        //     'email' => 'client@mail.com',
+        //     'occupation' => 'Student',
+        //     'connect' => '123',
+        //     'avatar' => 'images/default-avatar.png',
+        //     'password' => bcrypt('password')
+        // ]);
+        // $freelancer->assignRole($client_role);
 
         $wallet = new Wallet([
             'balance' => 0
         ]);
         $user->wallet()->save($wallet);
+        // $client->wallet()->save($wallet);
+        // $freelancer->wallet()->save($wallet);
     }
 }
