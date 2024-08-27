@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\StoreToolProjectRequest;
+use App\Http\Requests\StoreToolRequest;
 use App\Models\Category;
 use App\Models\Project;
+use App\Models\ProjectTool;
+use App\Models\Tool;
 use App\Models\TransactionWallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -87,7 +91,29 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        return view('admin.projects.show', compact('project'));
+    }
+
+    public function tools(Project $project)
+    {
+        if ($project->client_id !== Auth::id()) {
+            abort(403, 'You are not authorized to view this page');
+        }
+
+        $tools = Tool::all();
+        return view('admin.projects.tools', compact('project', 'tools'));
+    }
+
+    public function tools_store(StoreToolProjectRequest $request, Project $project)
+    {
+        DB::transaction(function () use ($request, $project) {
+            $validated = $request->validated();
+            $validated['project_id'] = $project->id;
+
+            $toolProject = ProjectTool::firstOrCreate($validated);
+        });
+
+        return redirect()->route('admin.projects.tools', $project->id);
     }
 
     /**
