@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProjectRequest;
+use App\Models\Category;
 use App\Models\Project;
+use App\Models\TransactionWallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
@@ -12,7 +18,19 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+
+        $projectsQuery = Project::with(['category', 'applicants'])->orderByDesc('id');
+
+        if ($user->hasRole('project_client')) {
+            $projectsQuery->whereHas('owner', function ($query) use ($user) {
+                $query->where('client_id', $user->id);
+            });
+        }
+
+        $projects = $projectsQuery->paginate(10);
+
+        return view('admin.projects.index', compact('projects'));
     }
 
     /**
@@ -20,15 +38,48 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+
+        return view('admin.projects.create', compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProjectRequest $request)
     {
-        //
+        $user = Auth::user();
+        $balance = $user->wallet->balance;
+
+        if ($request->input('budget') > $balance) {
+            return redirect()->back()->withErrors([
+                'budget' => 'You do not have enough balance to create this project.'
+            ]);
+        }
+
+        DB::transaction(function () use ($request, $user) {
+            $user->wallet->decrement('balance', $request->input('budget'));
+            $projectWalletTransaction = TransactionWallet::create([
+                'amount' => $request->input('budget'),
+                'type' => 'Project Cost',
+                'is_paid' => true,
+                'user_id' => $user->id
+            ]);
+
+            $validated = $request->validated();
+
+            if ($request->hasFile('thumbnail')) {
+                $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
+                $validated['thumbnail'] = $thumbnailPath;
+            }
+
+            $validated['slug'] = Str::slug($validated['name']);
+            $validated['has_finished'] = false;
+            $validated['has_started'] = false;
+            $validated['client_id'] = $user->id;
+
+            $newProject = Project::create($validated);
+        });
     }
 
     /**
