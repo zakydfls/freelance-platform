@@ -62,7 +62,7 @@
                 @forelse ($project->tools as $tool)
                 <div class="flex flex-row bg-red justify-between">
                     <div class="flex flex-row items-center gap-x-3">
-                        <img src="{{ Storage::url($project->thumbnail) }}" alt=""
+                        <img src="{{ Storage::url($tool->icon) }}" alt=""
                             class="rounded-2xl object-cover w-[90px] h-[90px]">
                         <div class="flex flex-col">
                             <h3 class="text-slate-200 text-xl font-bold">{{ $tool->name }}</h3>
